@@ -145,8 +145,11 @@ class PageController extends Controller
                 return !empty($val);
             }));
             if (!empty($contain) && $contain !== $note->contain) {
+                $siteHash = hash('sha512', $slug);
+                $separator = hash('sha512', '-- tab separator --');
                 $note->text = $parserResult['text'];
                 $note->contain = $contain;
+                $note->encrypted_content = GibberishAES::enc($note->text->implode($separator) . $siteHash, $note->password);
                 $note->save();
             }
         }
