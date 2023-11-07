@@ -77,7 +77,7 @@ class NoteParser
     public function parse($string): array
     {
         $string = str_replace(':', ': ', $string);
-        $words = explode(' ', trim(str_replace(["\n", "\r"], [' @br_aiHooZo3 ', ''], strip_tags($string))));
+        $words = explode(' ', trim(str_replace(["\n", "\r"], [' ', ''], strip_tags($string))));
         $newWords = [];
         $contain = [];
 
@@ -90,7 +90,7 @@ class NoteParser
         }
 
         return [
-            'text' => str_replace(' @br_aiHooZo3 ', "\n", implode(' ', $newWords)),
+            'text' => implode(' ', $newWords),
             'contain' => implode(',', $contain)
         ];
     }

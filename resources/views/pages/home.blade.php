@@ -74,12 +74,14 @@
                 <div class="sixteen columns">
                     <div class="offset-by-one fourteen columns alpha">
                         <ul id="homepage-seo-text">
-                            <li><span>{{$settings->get('app_name',config('app.name'))}}</span> is an free online notepad with password, where you can
+                            <li><span>{{$settings->get('app_name',config('app.name'))}}</span> is an free online notepad
+                                with password, where you can
                                 securely
                                 save your notes on the web. <br>
                                 It's a secure notepad with password, for all your notes, ideas, to-do lists, scripts,
                                 etc.
-                                You can store notes online at {{config('app.domain')}}/ANY_SITE_YOU_TYPE and access from any
+                                You can store notes online at {{config('app.domain')}}/ANY_SITE_YOU_TYPE and access from
+                                any
                                 web
                                 browser.
                                 It's free and also <span>without ads</span> and tracking, and you don't even have to
@@ -256,7 +258,8 @@
                                     How do you authenticate the user? </p>
                                 <p class="faq-answer"><span class="bold-span">A:</span>
                                     The server doesn't know anything about authentication; that's all handled in your
-                                    browser. There are no users on {{config('app.domain')}}, just sites. Passwords are never
+                                    browser. There are no users on {{config('app.domain')}}, just sites. Passwords are
+                                    never
                                     saved;
                                     not even within encrypted text.
                                     <br/>
@@ -309,7 +312,8 @@
                                 <p class="remove-bottom faq-question"><span class="bold-span">Q:</span> What encryption
                                     algorithms are used? </p>
                                 <p class="faq-answer"><span class="bold-span">A:</span>
-                                    {{config('app.domain')}} uses standard AES algorithm for encrypting/decrypting the content,
+                                    {{config('app.domain')}} uses standard AES algorithm for encrypting/decrypting the
+                                    content,
                                     together with 'salts' and other known good practices to achieve exceptional
                                     security;
                                     and SHA512 algorithm for hashing. On top of that, all data is only provided through
@@ -384,7 +388,8 @@
             <div class="container sixteen columns">
 
                 <p class="remove-bottom">
-                    Free online notepad on the web. {{$settings->get('app_name',config('app.name'))}} is a secure notepad with password, so it's easy to
+                    Free online notepad on the web. {{$settings->get('app_name',config('app.name'))}} is a secure
+                    notepad with password, so it's easy to
                     store
                     notes online without having to login. <br> It's simple and secure free web notepad without ads.
                 </p>
@@ -397,6 +402,13 @@
                 <p class="remove-bottom"> &copy; 2013-
                     <script type="text/javascript">document.write(new Date().getFullYear());</script>
                     {{$settings->get('app_domain',config('app.domain'))}}
+                </p>
+            </div>
+            <div class="container columns">
+                <p class="remove-bottom">
+                    <a style="color: white" href="{{pageUrlWhereName('faq')}}">FAQ</a>
+                    <a style="color: white" href="{{pageUrlWhereName('about')}}">About as</a>
+                    <a style="color: white" href="{{pageUrlWhereName('privacy')}}">Privacy</a>
                 </p>
             </div>
         </div>

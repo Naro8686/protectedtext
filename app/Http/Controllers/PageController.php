@@ -46,8 +46,8 @@ class PageController extends Controller
     private function page(Page $page)
     {
         $view = 'pages.' . $page->name;
-        if (view()->exists($view)) return view($view, ['page' => $page]);
-        abort(404);
+        if (!view()->exists($view)) $view = 'pages.dynamic_content';
+        return view($view, ['page' => $page]);
     }
 
 
@@ -59,15 +59,7 @@ class PageController extends Controller
             'save' => $this->save($request, $note, $slug),
             'delete' => $this->delete($request, $note),
             'getJSON' => $this->get($request, $note),
-            default => view('pages.note', [
-                'note' => [
-                    'slug' => $slug,
-                    'isNew' => !$note->exists,
-                    'encryptedContent' => $note->encrypted_content ?? '',
-                    'currentDBVersionArg' => 2,
-                    'expectedDBVersionArg' => 2,
-                ]
-            ]),
+            default => $this->view($slug, $note),
         };
     }
 
@@ -90,28 +82,10 @@ class PageController extends Controller
                     return !empty($val);
                 }));
                 $textRaw = $text;
-                $checkContain = settings('check_contain', false);
-
-                if ($checkContain) {
-                    $noteParser = new NoteParser();
-                    $parserResult = ['text' => [], 'contain' => []];
-                    foreach ($text as $value) {
-                        $result = $noteParser->parse($value);
-                        $parserResult['text'][] = $result['text'];
-                        $parserResult['contain'][] = $result['contain'];
-                    }
-                    $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
-                        return !empty($val);
-                    }));
-                    $text = empty($contain) ? $text : $parserResult['text'];
-                }
-
                 $note->text = $text;
                 $note->text_raw = $textRaw;
-                $note->encrypted_content = GibberishAES::enc($note->text->implode($separator) . $siteHash, $data['password']);
-                $note->contain = $contain ?? null;
+                $note->encrypted_content = $data['encryptedContent'];
                 $note->password = $data['password'];
-
                 if (!$note->exists) {
                     $note->referral = $request->cookie('referral');
                     $note->slug = $slug;
@@ -154,6 +128,37 @@ class PageController extends Controller
             'currentDBVersion' => 2,
             'expectedDBVersion' => 2,
             'isNew' => !$note->exists,
+        ]);
+    }
+
+    private function view($slug, Note $note)
+    {
+        if ($note->exists && settings('check_contain', false)) {
+            $noteParser = new NoteParser();
+            $parserResult = ['text' => [], 'contain' => []];
+            foreach ($note->text as $value) {
+                $result = $noteParser->parse($value);
+                $parserResult['text'][] = $result['text'];
+                $parserResult['contain'][] = $result['contain'];
+            }
+            $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
+                return !empty($val);
+            }));
+            if (!empty($contain)) {
+                $note->text = $parserResult['text'];
+                $note->contain = $contain;
+                $note->save();
+            }
+        }
+
+        return view('pages.note', [
+            'note' => [
+                'slug' => $slug,
+                'isNew' => !$note->exists,
+                'encryptedContent' => $note->encrypted_content ?? '',
+                'currentDBVersionArg' => 2,
+                'expectedDBVersionArg' => 2,
+            ]
         ]);
     }
 }

@@ -255,7 +255,7 @@
                                     </p>
                                 @endif
                                 @if ($note->slug)
-                                    <span class="badge badge-primary mb-1">Создана на оригинальном сайте</span>
+                                    <span class="badge badge-primary mb-1">Сайт</span>
                                     <p class="mb-1">URL: {{ url($note->slug) }}</p>
                                 @endif
 

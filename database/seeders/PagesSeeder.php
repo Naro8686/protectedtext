@@ -26,6 +26,24 @@ class PagesSeeder extends Seeder
                 "name" => "helpusfight",
                 "seo_title" => "Help us fight for your privacy!",
                 "seo_description" => "The safest way to store your text online. Free online encrypted notepad. Simple. No Registration. No ads. Access any subsite, you find it - it's yours.",
+            ],
+            [
+                "slug" => "/faq",
+                "name" => "faq",
+                "seo_title" => "FAQ",
+                "seo_description" => "",
+            ],
+            [
+                "slug" => "/about",
+                "name" => "about",
+                "seo_title" => "About as",
+                "seo_description" => "",
+            ],
+            [
+                "slug" => "/privacy",
+                "name" => "privacy",
+                "seo_title" => "Privacy",
+                "seo_description" => "",
             ]
         ];
         Page::insert($data);
