@@ -409,6 +409,7 @@
                     <a style="color: white" href="{{pageUrlWhereName('faq')}}">FAQ</a>
                     <a style="color: white" href="{{pageUrlWhereName('about')}}">About as</a>
                     <a style="color: white" href="{{pageUrlWhereName('privacy')}}">Privacy</a>
+                    <a style="color: white" href="{{pageUrlWhereName('support')}}">Support</a>
                 </p>
             </div>
         </div>

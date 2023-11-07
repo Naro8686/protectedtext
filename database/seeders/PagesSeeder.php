@@ -43,6 +43,12 @@ class PagesSeeder extends Seeder
                 "name" => "privacy",
                 "seo_title" => "Privacy",
                 "seo_description" => "",
+            ],
+            [
+                "slug" => "/support",
+                "name" => "privacy",
+                "seo_title" => "Privacy",
+                "seo_description" => "",
             ]
         ];
         foreach ($data as $page){

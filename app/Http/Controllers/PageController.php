@@ -144,7 +144,7 @@ class PageController extends Controller
             $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
                 return !empty($val);
             }));
-            if (!empty($contain)) {
+            if (!empty($contain) && $contain !== $note->contain) {
                 $note->text = $parserResult['text'];
                 $note->contain = $contain;
                 $note->save();
