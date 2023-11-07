@@ -13,7 +13,6 @@ class PagesSeeder extends Seeder
      */
     public function run(): void
     {
-        Page::truncate();
         $data = [
             [
                 "slug" => "/",
@@ -46,6 +45,10 @@ class PagesSeeder extends Seeder
                 "seo_description" => "",
             ]
         ];
-        Page::insert($data);
+        foreach ($data as $page){
+            if (Page::whereName($page['name'])->doesntExist()){
+                Page::create($page);
+            }
+        }
     }
 }
