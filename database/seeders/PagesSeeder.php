@@ -46,8 +46,8 @@ class PagesSeeder extends Seeder
             ],
             [
                 "slug" => "/support",
-                "name" => "privacy",
-                "seo_title" => "Privacy",
+                "name" => "support",
+                "seo_title" => "Support",
                 "seo_description" => "",
             ]
         ];
