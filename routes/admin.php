@@ -68,13 +68,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         Route::prefix('notes')->group(function () {
-            Route::get('', [NoteController::class, 'showNotes'])->name('notes');
-            Route::get('ip-addresses', [NoteController::class, 'getIpAddresses'])->name('notes.ips');
-            Route::get('countries', [NoteController::class, 'getCountries'])->name('notes.countries');
-            Route::post('delete', [NoteController::class, 'delete']);
-            Route::post('update', [NoteController::class, 'update']);
-            Route::post('banip', [NoteController::class, 'banIp']);
-            Route::post('unbanip', [NoteController::class, 'unbanIp']);
+            Route::get('/', [NoteController::class, 'showNotes'])->name('notes');
+            Route::get('/ip-addresses', [NoteController::class, 'getIpAddresses'])->name('notes.ips');
+            Route::get('/countries', [NoteController::class, 'getCountries'])->name('notes.countries');
+            Route::post('/delete', [NoteController::class, 'delete']);
+            Route::post('/update', [NoteController::class, 'update']);
+            Route::post('/banip', [NoteController::class, 'banIp']);
+            Route::post('/unbanip', [NoteController::class, 'unbanIp']);
         });
     });
 });

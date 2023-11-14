@@ -71,6 +71,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip3($value)
+ * @property int $viewed
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereViewed($value)
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -81,6 +83,7 @@ class Note extends Model
     protected $casts = [
         'text' => 'collection',
         'text_raw' => 'collection',
+        'viewed' => 'boolean',
     ];
 
     protected static function booted()

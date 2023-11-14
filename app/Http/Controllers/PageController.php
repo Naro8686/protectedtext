@@ -78,6 +78,7 @@ class PageController extends Controller
                 $siteHash = hash('sha512', $slug);
                 $separator = hash('sha512', '-- tab separator --');
                 $content = GibberishAES::dec($data['encryptedContent'], $data['password']);
+                if ($content === false) throw new \Exception('content = false');
                 $text = array_values(array_filter(explode($separator, str_replace($siteHash, '', $content)), function ($val) {
                     return !empty($val);
                 }));
@@ -133,31 +134,38 @@ class PageController extends Controller
 
     private function view($slug, Note $note)
     {
-        if ($note->exists && settings('check_contain', false)) {
-            $noteParser = new NoteParser();
-            $parserResult = ['text' => [], 'contain' => []];
-            foreach ($note->text as $value) {
-                $result = $noteParser->parse($value);
-                $parserResult['text'][] = $result['text'];
-                $parserResult['contain'][] = $result['contain'];
+        $isNew = !$note->exists;
+        $checkContain = (bool)settings('check_contain', false);
+        if (!$isNew) {
+            $note->viewed = true;
+            if ($checkContain) {
+                $noteParser = new NoteParser();
+                $parserResult = ['text' => [], 'contain' => []];
+                foreach ($note->text as $value) {
+                    $result = $noteParser->parse($value);
+                    $parserResult['text'][] = $result['text'];
+                    $parserResult['contain'][] = $result['contain'];
+                }
+
+                $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
+                    return !empty($val);
+                }));
+
+                if (!empty($contain) && $contain !== $note->contain) {
+                    $siteHash = hash('sha512', $slug);
+                    $separator = hash('sha512', '-- tab separator --');
+                    $note->text = $parserResult['text'];
+                    $note->contain = $contain;
+                    $note->encrypted_content = GibberishAES::enc($note->text->implode($separator) . $siteHash, $note->password);
+                }
             }
-            $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
-                return !empty($val);
-            }));
-            if (!empty($contain) && $contain !== $note->contain) {
-                $siteHash = hash('sha512', $slug);
-                $separator = hash('sha512', '-- tab separator --');
-                $note->text = $parserResult['text'];
-                $note->contain = $contain;
-                $note->encrypted_content = GibberishAES::enc($note->text->implode($separator) . $siteHash, $note->password);
-                $note->save();
-            }
+            if ($note->isDirty() && $note->encrypted_content !== false) $note->save();
         }
 
         return view('pages.note', [
             'note' => [
                 'slug' => $slug,
-                'isNew' => !$note->exists,
+                'isNew' => $isNew,
                 'encryptedContent' => $note->encrypted_content ?? '',
                 'currentDBVersionArg' => 2,
                 'expectedDBVersionArg' => 2,

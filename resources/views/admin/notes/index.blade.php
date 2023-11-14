@@ -35,11 +35,28 @@
                                             <div class="form-group">
                                                 <select class="form-control sample-select" name="status" id="status">
                                                     <option value=""></option>
-                                                    <option value="viewed" {{ request()->get('status') == 'viewed' ? 'selected' : '' }}>
-                                                        Прочитано
+                                                    <option
+                                                        value="deleted" {{ request()->get('status') == 'deleted' ? 'selected' : '' }}>
+                                                        Удалено
                                                     </option>
-                                                    <option value="not_viewed" {{ request()->get('status') == 'not_viewed' ? 'selected' : '' }}>
-                                                        Не прочитфно
+                                                    <option
+                                                        value="not_deleted" {{ request()->get('status') == 'not_deleted' ? 'selected' : '' }}>
+                                                        Не удалено
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <select class="form-control sample-select" name="viewed" id="viewed">
+                                                    <option value=""></option>
+                                                    <option
+                                                        value="yes" {{ request()->get('viewed') == 'yes' ? 'selected' : '' }}>
+                                                        Да
+                                                    </option>
+                                                    <option
+                                                        value="no" {{ request()->get('viewed') == 'no' ? 'selected' : '' }}>
+                                                        Нет
                                                     </option>
                                                 </select>
                                             </div>
@@ -49,10 +66,12 @@
                                                 <select class="form-control sample-select" name="coincidence"
                                                         id="coincidence">
                                                     <option value=""></option>
-                                                    <option value="1" {{ request()->get('coincidence') == '1' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="1" {{ request()->get('coincidence') == '1' ? 'selected' : '' }}>
                                                         Да
                                                     </option>
-                                                    <option value="0" {{ request()->get('coincidence') == '0' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="0" {{ request()->get('coincidence') == '0' ? 'selected' : '' }}>
                                                         Нет
                                                     </option>
                                                 </select>
@@ -62,10 +81,12 @@
                                             <div class="form-group">
                                                 <select class="form-control sample-select" name="sites" id="sites">
                                                     <option value=""></option>
-                                                    <option value="onion" {{ request()->get('sites') == 'onion' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="onion" {{ request()->get('sites') == 'onion' ? 'selected' : '' }}>
                                                         .onion
                                                     </option>
-                                                    <option value="biz" {{ request()->get('sites') == 'biz' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="biz" {{ request()->get('sites') == 'biz' ? 'selected' : '' }}>
                                                         .biz
                                                     </option>
                                                 </select>
@@ -85,13 +106,16 @@
                                             <div class="form-group">
                                                 <select class="form-control sample-select" name="prv" id="prv">
                                                     <option value=""></option>
-                                                    <option value="xprv" {{ request()->get('prv') == 'xprv' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="xprv" {{ request()->get('prv') == 'xprv' ? 'selected' : '' }}>
                                                         xprv
                                                     </option>
-                                                    <option value="yprv" {{ request()->get('prv') == 'yprv' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="yprv" {{ request()->get('prv') == 'yprv' ? 'selected' : '' }}>
                                                         yprv
                                                     </option>
-                                                    <option value="zprv" {{ request()->get('prv') == 'zprv' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="zprv" {{ request()->get('prv') == 'zprv' ? 'selected' : '' }}>
                                                         zprv
                                                     </option>
                                                 </select>
@@ -105,7 +129,8 @@
                                                             id="show_bip_{{$bipNum}}">
                                                         <option value=""></option>
                                                         @foreach($bipCounts as $bipValue => $bipTxt)
-                                                            <option value="{{$bipValue}}" {{ request()->get("show_bip_$bipNum") == $bipValue ? 'selected' : '' }}>
+                                                            <option
+                                                                value="{{$bipValue}}" {{ request()->get("show_bip_$bipNum") == $bipValue ? 'selected' : '' }}>
                                                                 {{$bipTxt}}
                                                             </option>
                                                         @endforeach
@@ -117,13 +142,16 @@
                                             <div class="form-group">
                                                 <select class="form-control sample-select" name="hash" id="hash">
                                                     <option value=""></option>
-                                                    <option value="{{\App\Enums\Hash::HASH_64}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_64 ? 'selected' : '' }}>
+                                                    <option
+                                                        value="{{\App\Enums\Hash::HASH_64}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_64 ? 'selected' : '' }}>
                                                         64-128
                                                     </option>
-                                                    <option value="{{\App\Enums\Hash::HASH_51}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_51 ? 'selected' : '' }}>
+                                                    <option
+                                                        value="{{\App\Enums\Hash::HASH_51}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_51 ? 'selected' : '' }}>
                                                         51
                                                     </option>
-                                                    <option value="{{\App\Enums\Hash::HASH_52}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_52 ? 'selected' : '' }}>
+                                                    <option
+                                                        value="{{\App\Enums\Hash::HASH_52}}" {{ request()->get('hash') == \App\Enums\Hash::HASH_52 ? 'selected' : '' }}>
                                                         52
                                                     </option>
                                                 </select>
@@ -134,7 +162,8 @@
                                                 <select class="form-control sample-select" name="by_numbers"
                                                         id="by_numbers">
                                                     <option value=""></option>
-                                                    <option value="1" {{ request()->get('by_numbers') == '1' ? 'selected' : '' }}>
+                                                    <option
+                                                        value="1" {{ request()->get('by_numbers') == '1' ? 'selected' : '' }}>
                                                         Да
                                                     </option>
                                                 </select>
@@ -175,7 +204,8 @@
                                     <form id="delete-chosen" action="/admin/notes/delete" method="post"
                                           class="form-group">
                                         @csrf
-                                        <button class="btn btn-sm btn-outline-danger" id="delete-chosen-btn" type="submit"
+                                        <button class="btn btn-sm btn-outline-danger" id="delete-chosen-btn"
+                                                type="submit"
                                                 disabled>Удалить выбранные
                                         </button>
                                     </form>
@@ -185,7 +215,8 @@
                                         @csrf
                                         <input type="hidden" name="delete_all" value="1">
                                         <input type="hidden" name="password" id="password" value="">
-                                        <button class="btn btn-sm btn-outline-danger ms-2" type="button">Удалить все</button>
+                                        <button class="btn btn-sm btn-outline-danger ms-2" type="button">Удалить все
+                                        </button>
                                     </form>
                                 </div>
 
@@ -201,18 +232,24 @@
                         <div class="row mb-4 note-item">
                             <hr>
                             <div class="col-md-4 mb-4">
-                                <p>
-                                    <span class="small">ID: {{ $note->id }}</span>
+                                <p style="margin-bottom:0">
+                                    <span class="badge badge-success">ID: {{ $note->id }}</span>
                                     @if ($note->deleted_at)
                                         <span class="badge badge-danger">Удалено</span>
                                     @else
                                         <span class="badge badge-success">Не удалено</span>
                                     @endif
+                                    @if ($note->viewed)
+                                        <span class="badge badge-success">Прочитано</span>
+                                    @else
+                                        <span class="badge badge-warning">Не прочитано</span>
+                                    @endif
                                 </p>
-                                <p class="d-flex align-items-center" style="height: 30px; width: 100px">
+                                <p class="d-flex align-items-center" style="height: 30px; width: 100px;margin-bottom:0">
                                     <strong class="text-muted" style="height: 20px">Страна: </strong>&nbsp;
                                     @empty(!$note->country_flag)
-                                        <img src="{{$note->country_flag}}" title="{{$note->ip}}" width="30px"
+                                        <img alt="{{$note->country_name}}" src="{{$note->country_flag}}"
+                                             title="{{$note->ip}}" width="30px"
                                              height="30px">
                                         <strong style="height: 20px">({{$note->country_name}})</strong>
                                     @else
@@ -245,7 +282,7 @@
                                     <strong>
                                         <a href="{{ route('admin.notes') . '?ip=' . $note->ip }}">{{ $note->ip }}</a>
                                     </strong>
-                                    / {{ $note->browser }}</p>
+                                    / {{ $note->user_agent }}</p>
                                 @if($note->contain)
                                     <p class="mb-1">
                                         <span>Совпадения:</span>
@@ -255,8 +292,7 @@
                                     </p>
                                 @endif
                                 @if ($note->slug)
-                                    <span class="badge badge-primary mb-1">Сайт</span>
-                                    <p class="mb-1">URL: {{ url($note->slug) }}</p>
+                                    <p class="mb-1">Сайт: <strong><a target="_blank" href="{{ url($note->slug) }}">{{ url($note->slug) }}</a></strong></p>
                                 @endif
 
                                 <div class="form-check form-check-flat form-check-primary">
@@ -272,7 +308,8 @@
                                     <div class="col-md-6">
                                         <ul class="nav nav-pills" id="myTab-{{ $note->id }}" role="tablist">
                                             <li class="mr-1">
-                                                <a class="btn btn-sm btn-outline-primary" id="pills-home-tab-{{ $note->id }}"
+                                                <a class="btn btn-sm btn-outline-primary"
+                                                   id="pills-home-tab-{{ $note->id }}"
                                                    data-toggle="pill"
                                                    data-target="#pills-home-{{ $note->id }}"
                                                    href="#pills-home-{{ $note->id }}"
@@ -297,7 +334,8 @@
 
 
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <button class="btn btn-sm btn-outline-success mr-1" form="note-form-{{$note->id}}">
+                                            <button class="btn btn-sm btn-outline-success mr-1"
+                                                    form="note-form-{{$note->id}}">
                                                 Сохранить
                                             </button>
 
@@ -340,7 +378,8 @@
 
                                                 </div>
                                                 <div class="tab-pane fade" id="pills-profile-{{ $note->id }}"
-                                                     role="tabpanel" aria-labelledby="pills-profile-tab-{{ $note->id }}">
+                                                     role="tabpanel"
+                                                     aria-labelledby="pills-profile-tab-{{ $note->id }}">
                                                     @foreach($note->text_raw as $textRaw)
                                                         <textarea class="form-control mt-3" rows="7"
                                                                   name="text_raw[]">{{ $textRaw }}</textarea>
@@ -465,6 +504,12 @@
                     allowClear: true
                 });
 
+                const viewedSelect = $('select#viewed');
+                viewedSelect.select2({
+                    placeholder: 'Прочитано',
+                    allowClear: true
+                });
+
                 const coincidenceSelect = $('select#coincidence');
                 coincidenceSelect.select2({
                     placeholder: 'По совпадениям',
@@ -553,11 +598,7 @@
                 const deleteAllForm = $('#delete-all');
 
                 deleteChosenForm.on("submit", function () {
-                    if (confirm("Вы уверены, что хотите удалить выбранные заметки?")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return confirm("Вы уверены, что хотите удалить выбранные заметки?");
                 });
 
                 deleteAllForm.find('button').on("click", function (e) {
