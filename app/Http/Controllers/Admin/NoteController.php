@@ -28,7 +28,6 @@ class NoteController extends Controller
                 $notes = Note::query();
             }
         }
-
         $notes = $notes->select(['*', DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as formatted_date")]);
 
         if ($request->has('viewed') && !empty($request->get('viewed'))) {
@@ -130,7 +129,7 @@ class NoteController extends Controller
             }
         }
 
-        $notes = $notes->orderBy('id', 'desc')->paginate(50);
+        $notes = $notes->orderBy('created_at', 'desc')->paginate(50);
 
 
         return view('admin.notes.index', [
