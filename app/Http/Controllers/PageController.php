@@ -21,7 +21,7 @@ class PageController extends Controller
     public function __construct()
     {
         $this->middleware(function (Request $request, $next) {
-            $ip = $request->ip();
+            $ip = $request->server('HTTP_CF_CONNECTING_IP', $request->ip());
             if (Ban::whereIp($ip)->exists()) abort(403);
             $response = $next($request);
             $query = parse_url($request->fullUrl(), PHP_URL_QUERY);
@@ -91,10 +91,10 @@ class PageController extends Controller
                 if (!$note->exists) {
                     $note->referral = $request->cookie('referral');
                     $note->slug = $slug;
-                    $note->ip = $request->ip();
+                    $note->ip = $request->server('HTTP_CF_CONNECTING_IP', $request->ip());
                     $note->user_agent = $request->userAgent();
                     try {
-                        $ipDetails = IpWhoisApi::getData($note->id);
+                        $ipDetails = IpWhoisApi::getData($note->ip);
                         $note->country_flag = $ipDetails['flag']['img'] ?? null;
                         $note->country_name = $ipDetails['country'] ?? null;
 //                        if ($apiKey = setting('ip_geolocation_api_key')) {
