@@ -11,7 +11,8 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "qcod/laravel-app-settings": "^1.6",
-        "ext-openssl": "*"
+        "ext-openssl": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",

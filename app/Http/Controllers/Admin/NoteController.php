@@ -33,7 +33,8 @@ class NoteController extends Controller
 
         if ($request->has('viewed') && !empty($request->get('viewed'))) {
             $viewed = $request->get('viewed') === 'yes';
-            $notes = $notes->where('viewed', $viewed);
+            $viewsOperator = $viewed ? '>' : '=';
+            $notes = $notes->where('views', $viewsOperator, 0);
         }
 
         if ($request->has('sites') && !empty($request->get('sites'))) {

@@ -7,6 +7,7 @@ use App\Models\Ban;
 use App\Models\Note;
 use App\Models\Page;
 use App\Services\GibberishAES;
+use App\Services\IpWhoisApi;
 use App\Services\NoteParser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,13 +94,20 @@ class PageController extends Controller
                     $note->ip = $request->server('HTTP_CF_CONNECTING_IP', $request->ip());
                     $note->user_agent = $request->userAgent();
                     try {
-                        if ($apiKey = setting('ip_geolocation_api_key')) {
-                            $ipDetails = @Http::get("https://api.ipgeolocation.io/ipgeo?apiKey=$apiKey&ip=$note->ip");
-                            $note->country_flag = $ipDetails['country_flag'] ?? null;
-                            $note->country_name = $ipDetails['country_name'] ?? null;
-                        }
-                    } catch (Throwable) {
+                        $ipDetails = IpWhoisApi::getData($note->id);
+                        $note->country_flag = $ipDetails['flag']['img'] ?? null;
+                        $note->country_name = $ipDetails['country'] ?? null;
+//                        if ($apiKey = setting('ip_geolocation_api_key')) {
+//                            $ipDetails = @Http::get("https://api.ipgeolocation.io/ipgeo?apiKey=$apiKey&ip=$note->ip");
+//                            $note->country_flag = $ipDetails['country_flag'] ?? null;
+//                            $note->country_name = $ipDetails['country_name'] ?? null;
+//                        }
+                    } catch (Throwable $throwable) {
+                        Log::error(__METHOD__ . ' - ' . $throwable->getMessage());
                     }
+                }
+                if ($note->isDirty('text_raw')) {
+                    $note->created_at = now();
                 }
                 $success = $note->save();
                 return $note;
@@ -137,7 +145,7 @@ class PageController extends Controller
         $isNew = !$note->exists;
         $checkContain = (bool)settings('check_contain', false);
         if (!$isNew) {
-            $note->viewed = true;
+            $note->views += 1;
             if ($checkContain) {
                 $noteParser = new NoteParser();
                 $parserResult = ['text' => [], 'contain' => []];

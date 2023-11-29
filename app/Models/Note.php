@@ -22,15 +22,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $bip_1_text
  * @property int $bip_1_count
  * @property int $bip_1_checked
+ * @property int $has_bip_1
  * @property string|null $bip_2_text
  * @property int $bip_2_count
  * @property int $bip_2_checked
+ * @property int $has_bip_2
  * @property string|null $bip_3_text
  * @property int $bip_3_count
  * @property int $bip_3_checked
+ * @property int $has_bip_3
  * @property string|null $country_flag
  * @property string|null $country_name
  * @property string|null $contain
+ * @property int $views
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -53,6 +57,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereEncryptedContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip3($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note wherePassword($value)
@@ -63,16 +70,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereTextRaw($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note whereUserAgent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Note whereViews($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Note withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Note withoutTrashed()
- * @property int $has_bip_1
- * @property int $has_bip_2
- * @property int $has_bip_3
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereHasBip3($value)
- * @property int $viewed
- * @method static \Illuminate\Database\Eloquent\Builder|Note whereViewed($value)
  * @mixin \Eloquent
  */
 class Note extends Model
@@ -83,7 +83,7 @@ class Note extends Model
     protected $casts = [
         'text' => 'collection',
         'text_raw' => 'collection',
-        'viewed' => 'boolean',
+        'views' => 'integer',
     ];
 
     protected static function booted()

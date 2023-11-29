@@ -239,10 +239,10 @@
                                     @else
                                         <span class="badge badge-success">Не удалено</span>
                                     @endif
-                                    @if ($note->viewed)
-                                        <span class="badge badge-success">Прочитано</span>
+                                    @if ($note->views)
+                                        <span class="badge badge-success">Количество просмотров: {{$note->views}}</span>
                                     @else
-                                        <span class="badge badge-warning">Не прочитано</span>
+                                        <span class="badge badge-warning">Не просмотрено</span>
                                     @endif
                                 </p>
                                 <p class="d-flex align-items-center" style="height: 30px; width: 100px;margin-bottom:0">
@@ -292,7 +292,9 @@
                                     </p>
                                 @endif
                                 @if ($note->slug)
-                                    <p class="mb-1">Сайт: <strong><a target="_blank" href="{{ url($note->slug) }}">{{ url($note->slug) }}</a></strong></p>
+                                    <p class="mb-1">Сайт: <strong><a target="_blank"
+                                                                     href="{{ url($note->slug) }}">{{ url($note->slug) }}</a></strong>
+                                    </p>
                                 @endif
 
                                 <div class="form-check form-check-flat form-check-primary">
