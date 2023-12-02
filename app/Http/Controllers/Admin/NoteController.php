@@ -197,21 +197,11 @@ class NoteController extends Controller
      */
     public function banIp(Request $request)
     {
-        $key = $request->input('ip');
-        $banned_model = new Ban;
-        if (!$banned_model::where('ip', $key)->first()) {
-            $banned_model::insert([
-                [
-                    'ip' => $key,
-                    'created_at' => Carbon::now(),
-                    'deleted_at' => Carbon::now()
-                ]
-            ]);
-        } elseif ($banned = $banned_model::where('ip', $key)->first()) {
-            $banned->delete();
-        }
-
-
+        $ip = $request->input('ip');
+        $ban = Ban::withTrashed()->whereIp($ip)->first();
+        (!is_null($ban) && $ban->trashed())
+            ? $ban->restore()
+            : Ban::create(['ip' => $ip]);
         return back();
     }
 
@@ -220,11 +210,8 @@ class NoteController extends Controller
      */
     public function unbanIp(Request $request)
     {
-        $key = $request->input('ip');
-        if ($banned = Ban::withTrashed()->where('ip', $key)->first()) {
-            $banned->restore();
-        }
-
+        $ip = $request->input('ip');
+        Ban::whereIp($ip)->delete();
         return back();
     }
 

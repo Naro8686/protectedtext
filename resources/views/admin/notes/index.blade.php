@@ -292,8 +292,8 @@
                                     </p>
                                 @endif
                                 @if ($note->slug)
-                                    <p class="mb-1">Сайт: <strong><a target="_blank"
-                                                                     href="{{ url($note->slug) }}">{{ url($note->slug) }}</a></strong>
+                                    <p class="mb-1">Сайт: <strong><a @if(!$note->trashed()) target="_blank" @endif
+                                            href="{{ $note->trashed() ? 'javascript:void(0);' : url($note->slug) }}">{{ url($note->slug) }}</a></strong>
                                     </p>
                                 @endif
 
@@ -341,7 +341,7 @@
                                                 Сохранить
                                             </button>
 
-                                            @if (\App\Models\Ban::onlyTrashed()->where('ip',$note->ip)->first())
+                                            @if (\App\Models\Ban::whereIp($note->ip)->exists())
                                                 <form action="/admin/notes/unbanip" method="post" class="mr-1">
                                                     @csrf
                                                     <input type="hidden" name="ip" value="{{ $note->ip }}">

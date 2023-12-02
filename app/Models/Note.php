@@ -85,11 +85,4 @@ class Note extends Model
         'text_raw' => 'collection',
         'views' => 'integer',
     ];
-
-    protected static function booted()
-    {
-        static::deleted(function (self $note) {
-            $note->update(['slug' => null]);
-        });
-    }
 }
