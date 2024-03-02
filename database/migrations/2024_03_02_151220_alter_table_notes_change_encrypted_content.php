@@ -21,7 +21,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('notes', function (Blueprint $table) {
-            $table->text('encrypted_content')->fulltext();
+            $table->text('encrypted_content')->change();
         });
     }
 };
