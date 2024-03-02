@@ -7,7 +7,6 @@ use App\Models\Ban;
 use App\Models\Note;
 use App\Services\GibberishAES;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -129,7 +128,10 @@ class NoteController extends Controller
             }
         }
 
-        $notes = $notes->orderBy('created_at', 'desc')->paginate(50);
+        $notes = $notes
+            ->orderByDesc('created_at')
+            ->orderByDesc('views')
+            ->paginate(50);
 
 
         return view('admin.notes.index', [
