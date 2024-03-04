@@ -127,11 +127,7 @@ class NoteController extends Controller
                 $notes = $notes->havingBetween('formatted_date', [$start, $end]);
             }
         }
-
-        $notes = $notes
-            ->orderByDesc('created_at')
-            ->orderByDesc('views')
-            ->paginate(50);
+        $notes = $notes->orderBy('created_at', 'desc')->paginate(50);
 
 
         return view('admin.notes.index', [
