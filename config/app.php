@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'debug' => (bool)env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
     */
 
     'domain' => env('APP_DOMAIN', 'localhost'),
-    'url' => env('APP_URL', 'http://' . env('APP_DOMAIN')),
+    'url'    => env('APP_URL', 'http://'.env('APP_DOMAIN')),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -84,7 +84,8 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale'             => env("APP_LOCALE", 'en'),
+    'admin_panel_locale' => env("ADMIN_PANEL_LOCALE", 'en'),
 
     /*
     |--------------------------------------------------------------------------

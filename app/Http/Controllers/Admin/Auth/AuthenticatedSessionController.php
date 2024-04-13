@@ -17,6 +17,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        $adminPanelLocal = config('app.admin_panel_locale');
+        if (!app()->isLocale($adminPanelLocal)) {
+            app()->setLocale($adminPanelLocal);
+        }
         return view('admin.auth.login');
     }
 
@@ -25,6 +29,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $adminPanelLocal = config('app.admin_panel_locale');
+        if (!app()->isLocale($adminPanelLocal)) {
+            app()->setLocale($adminPanelLocal);
+        }
         $request->authenticate();
 
         $request->session()->regenerate();
