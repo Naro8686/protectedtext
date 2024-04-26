@@ -26,7 +26,9 @@ class CheckBipsJob implements ShouldQueue
 
     /**
      * Create a new job instance.
-     * @param int $noteId
+     *
+     * @param  int  $noteId
+     *
      * @return void
      */
     public function __construct(int $noteId)
@@ -43,34 +45,39 @@ class CheckBipsJob implements ShouldQueue
     {
         try {
             if ($note = Note::find($this->id)) {
-                $bips1 = Cache::rememberForever('bips-1', function () {
+                $bips1 = Cache::rememberForever('bips-1', function() {
                     return Bip::whereNum(1)->pluck('text')->toArray();
                 });
 
-                $bips2 = Cache::rememberForever('bips-2', function () {
+                $bips2 = Cache::rememberForever('bips-2', function() {
                     return Bip::whereNum(2)->pluck('text')->toArray();
                 });
 
-                $bips3 = Cache::rememberForever('bips-3', function () {
+                $bips3 = Cache::rememberForever('bips-3', function() {
                     return Bip::whereNum(3)->pluck('text')->toArray();
                 });
 
-                $text = preg_replace('/[^\p{L}\p{N}\s]/u', '', $note->text->implode(' '));
+                $text = preg_replace('/[^\p{L}\p{N}\s]/u', '',
+                    $note->text->implode(' '));
                 $words = preg_split('/\s+/', $text, -1);
-                $noteWords = array_map('strtolower', is_array($words) ? $words : [$words]);
+                $noteWords = array_map('strtolower',
+                    is_array($words) ? $words : [$words]);
 
                 $data = [];
 
-                $bip1Texts = array_values(array_intersect(is_array($bips1) ? $bips1 : [$bips1], $noteWords));
+                $bip1Texts = array_values(array_intersect($noteWords,
+                    is_array($bips1) ? $bips1 : [$bips1]));
                 if (!empty($bip1Texts)) {
                     $bip1Texts = array_unique($bip1Texts);
                     $count1 = count($bip1Texts);
                     $data['bip_1_text'] = implode(', ', $bip1Texts);
-                    $data['has_bip_1'] = in_array($count1, [12, 15, 18, 21, 24]) ? 1 : 0;
+                    $data['has_bip_1'] = in_array($count1, [12, 15, 18, 21, 24])
+                        ? 1 : 0;
                     $data['bip_1_count'] = $count1;
                 }
 
-                $bip2Texts = array_values(array_intersect(is_array($bips2) ? $bips2 : [$bips2], $noteWords));
+                $bip2Texts = array_values(array_intersect($noteWords,
+                    is_array($bips2) ? $bips2 : [$bips2]));
                 if (!empty($bip2Texts)) {
                     $bip2Texts = array_unique($bip2Texts);
                     $count2 = count($bip2Texts);
@@ -79,7 +86,8 @@ class CheckBipsJob implements ShouldQueue
                     $data['bip_2_count'] = $count2;
                 }
 
-                $bip3Texts = array_values(array_intersect(is_array($bips3) ? $bips3 : [$bips3], $noteWords));
+                $bip3Texts = array_values(array_intersect($noteWords,
+                    is_array($bips3) ? $bips3 : [$bips3]));
                 if (!empty($bip3Texts)) {
                     $bip3Texts = array_unique($bip3Texts);
                     $count3 = count($bip3Texts);
@@ -94,7 +102,8 @@ class CheckBipsJob implements ShouldQueue
                 $note->update($data);
             }
         } catch (Throwable $throwable) {
-            Log::error(__METHOD__ . ' - ' . $throwable->getMessage() . ' - ' . $throwable->getLine());
+            Log::error(__METHOD__.' - '.$throwable->getMessage().' - '
+                .$throwable->getLine());
         }
     }
 }

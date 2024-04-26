@@ -9,9 +9,13 @@ use App\Models\Page;
 use App\Services\GibberishAES;
 use App\Services\IpWhoisApi;
 use App\Services\NoteParser;
+use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Log;
 use Throwable;
 
@@ -35,7 +39,7 @@ class PageController extends Controller
         });
     }
 
-    public function __invoke(Request $request, $slug = '/')
+    public function __invoke(Request $request, $slug = '/'): Application|View|Factory|JsonResponse|\Illuminate\Contracts\Foundation\Application
     {
         $slug = '/' . ltrim($slug, '/');
         if ($page = Page::whereSlug($slug)->first())
@@ -44,7 +48,7 @@ class PageController extends Controller
             return $this->note($request, $slug);
     }
 
-    private function page(Page $page)
+    private function page(Page $page): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $view = 'pages.' . $page->name;
         if (!view()->exists($view)) $view = 'pages.dynamic_content';
@@ -52,7 +56,7 @@ class PageController extends Controller
     }
 
 
-    private function note(Request $request, $slug)
+    private function note(Request $request, $slug): Factory|View|Application|JsonResponse|\Illuminate\Contracts\Foundation\Application
     {
         $note = Note::whereSlug($slug)->firstOrNew();
         $action = $request->get('action');
@@ -64,7 +68,7 @@ class PageController extends Controller
         };
     }
 
-    private function save(Request $request, Note $note, $slug)
+    private function save(Request $request, Note $note, $slug): JsonResponse
     {
         if (!$request->isMethod('POST')) abort(403);
         $data = $request->validate([
@@ -79,7 +83,7 @@ class PageController extends Controller
                 $siteHash = hash('sha512', $slug);
                 $separator = hash('sha512', '-- tab separator --');
                 $content = GibberishAES::dec($data['encryptedContent'], $data['password']);
-                if ($content === false) throw new \Exception('content = false');
+                if ($content === false) throw new Exception('content = false');
                 $text = array_values(array_filter(explode($separator, str_replace($siteHash, '', $content)), function ($val) {
                     return !empty($val);
                 }));
@@ -112,7 +116,7 @@ class PageController extends Controller
                 $success = $note->save();
                 return $note;
             });
-            dispatch(new CheckBipsJob($note->id));
+            dispatch_sync(new CheckBipsJob($note->id));
         } catch (Throwable $throwable) {
             Log::error(__METHOD__ . ' - ' . $throwable->getMessage());
         }
@@ -120,7 +124,7 @@ class PageController extends Controller
         return response()->json(['status' => $success ? 'success' : 'error']);
     }
 
-    private function delete(Request $request, Note $note)
+    private function delete(Request $request, Note $note): JsonResponse
     {
         if (!$request->isMethod('POST')) abort(403);
         $request->validate([
@@ -129,7 +133,7 @@ class PageController extends Controller
         return response()->json(['status' => $note->delete() ? 'success' : 'error']);
     }
 
-    private function get(Request $request, Note $note)
+    private function get(Request $request, Note $note): JsonResponse
     {
         if (!$request->isMethod('GET')) abort(403);
         return response()->json([
@@ -140,7 +144,7 @@ class PageController extends Controller
         ]);
     }
 
-    private function view($slug, Note $note)
+    private function view($slug, Note $note): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $isNew = !$note->exists;
         $checkContain = (bool)settings('check_contain', false);
