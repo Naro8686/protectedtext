@@ -27,19 +27,19 @@ class CheckBipsCommand extends Command
      */
     public function handle()
     {
-        Note::withTrashed()
-            ->where(function ($query) {
+        $notes = Note::withTrashed()
+            ->where(function($query) {
                 $query
                     ->where('bip_1_checked', 0)
                     ->orWhere('bip_2_checked', 0)
                     ->orWhere('bip_3_checked', 0);
             })
             ->orderByDesc('id')
-            ->chunk(15000, function ($notes) {
-                foreach ($notes as $note) {
-                    dispatch(new CheckBipsJob($note->id));
-                }
-            });
+            ->cursor();
+        foreach ($notes as $iter => $note) {
+            dispatch(new CheckBipsJob($note->id))
+                ->delay(now()->addSeconds($iter));
+        }
         return 0;
     }
 }
