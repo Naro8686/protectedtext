@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class CheckBipsJob implements ShouldQueue
+class CheckBipsJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -34,6 +34,16 @@ class CheckBipsJob implements ShouldQueue
     public function __construct(int $noteId)
     {
         $this->id = $noteId;
+    }
+
+    /**
+     * The unique ID of the job.
+     *
+     * @return string
+     */
+    public function uniqueId()
+    {
+        return $this->id;
     }
 
     /**
