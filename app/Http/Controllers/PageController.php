@@ -24,14 +24,19 @@ class PageController extends Controller
 
     public function __construct()
     {
-        $this->middleware(function (Request $request, $next) {
+        $this->middleware(function(Request $request, $next) {
             $ip = $request->server('HTTP_CF_CONNECTING_IP', $request->ip());
-            if (Ban::whereIp($ip)->exists()) abort(403);
+            if (Ban::whereIp($ip)->exists()) {
+                abort(403);
+            }
             $response = $next($request);
             $query = parse_url($request->fullUrl(), PHP_URL_QUERY);
             $referralLink = settings('referral_link');
 
-            if (!empty($referralLink) && $query && is_null($request->cookie('referral')) && str_contains($query, parse_url($referralLink, PHP_URL_QUERY))) {
+            if (!empty($referralLink) && $query
+                && is_null($request->cookie('referral'))
+                && str_contains($query, parse_url($referralLink, PHP_URL_QUERY))
+            ) {
                 $minutes = 7 * 24 * 60; // week
                 $response->cookie('referral', $referralLink, $minutes);
             }
@@ -39,25 +44,32 @@ class PageController extends Controller
         });
     }
 
-    public function __invoke(Request $request, $slug = '/'): Application|View|Factory|JsonResponse|\Illuminate\Contracts\Foundation\Application
-    {
-        $slug = '/' . ltrim($slug, '/');
-        if ($page = Page::whereSlug($slug)->first())
+    public function __invoke(
+        Request $request,
+        $slug = '/'
+    ): Application|View|Factory|JsonResponse|\Illuminate\Contracts\Foundation\Application {
+        $slug = '/'.ltrim($slug, '/');
+        if ($page = Page::whereSlug($slug)->first()) {
             return $this->page($page);
-        else
+        } else {
             return $this->note($request, $slug);
+        }
     }
 
-    private function page(Page $page): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
-    {
-        $view = 'pages.' . $page->name;
-        if (!view()->exists($view)) $view = 'pages.dynamic_content';
+    private function page(Page $page
+    ): Factory|Application|View|\Illuminate\Contracts\Foundation\Application {
+        $view = 'pages.'.$page->name;
+        if (!view()->exists($view)) {
+            $view = 'pages.dynamic_content';
+        }
         return view($view, ['page' => $page]);
     }
 
 
-    private function note(Request $request, $slug): Factory|View|Application|JsonResponse|\Illuminate\Contracts\Foundation\Application
-    {
+    private function note(
+        Request $request,
+        $slug
+    ): Factory|View|Application|JsonResponse|\Illuminate\Contracts\Foundation\Application {
         $note = Note::whereSlug($slug)->firstOrNew();
         $action = $request->get('action');
         return match ($action) {
@@ -70,21 +82,33 @@ class PageController extends Controller
 
     private function save(Request $request, Note $note, $slug): JsonResponse
     {
-        if (!$request->isMethod('POST')) abort(403);
+        if (!$request->isMethod('POST')) {
+            abort(403);
+        }
         $data = $request->validate([
-            'initHashContent' => ['required'],
+            'initHashContent'    => ['required'],
             'currentHashContent' => ['required'],
-            'encryptedContent' => ['required'],
-            'password' => ['required'],
+            'encryptedContent'   => ['required'],
+            'password'           => ['required'],
         ]);
         $success = false;
         try {
-            $note = DB::transaction(function () use ($note, $data, $slug, $request, &$success) {
+            $note = DB::transaction(function() use (
+                $note,
+                $data,
+                $slug,
+                $request,
+                &$success
+            ) {
                 $siteHash = hash('sha512', $slug);
                 $separator = hash('sha512', '-- tab separator --');
-                $content = GibberishAES::dec($data['encryptedContent'], $data['password']);
-                if ($content === false) throw new Exception('content = false');
-                $text = array_values(array_filter(explode($separator, str_replace($siteHash, '', $content)), function ($val) {
+                $content = GibberishAES::dec($data['encryptedContent'],
+                    $data['password']);
+                if ($content === false) {
+                    throw new Exception('content = false');
+                }
+                $text = array_values(array_filter(explode($separator,
+                    str_replace($siteHash, '', $content)), function($val) {
                     return !empty($val);
                 }));
                 $textRaw = $text;
@@ -95,7 +119,8 @@ class PageController extends Controller
                 if (!$note->exists) {
                     $note->referral = $request->cookie('referral');
                     $note->slug = $slug;
-                    $note->ip = $request->server('HTTP_CF_CONNECTING_IP', $request->ip());
+                    $note->ip = $request->server('HTTP_CF_CONNECTING_IP',
+                        $request->ip());
                     $note->user_agent = $request->userAgent();
                     try {
                         $ipDetails = IpWhoisApi::getData($note->ip);
@@ -107,7 +132,7 @@ class PageController extends Controller
 //                            $note->country_name = $ipDetails['country_name'] ?? null;
 //                        }
                     } catch (Throwable $throwable) {
-                        Log::error(__METHOD__ . ' - ' . $throwable->getMessage());
+                        Log::error(__METHOD__.' - '.$throwable->getMessage());
                     }
                 }
                 if ($note->isDirty('text_raw')) {
@@ -116,9 +141,9 @@ class PageController extends Controller
                 $success = $note->save();
                 return $note;
             });
-            dispatch_sync(new CheckBipsJob($note->id));
+            CheckBipsJob::dispatchSync($note->id);
         } catch (Throwable $throwable) {
-            Log::error(__METHOD__ . ' - ' . $throwable->getMessage());
+            Log::error(__METHOD__.' - '.$throwable->getMessage());
         }
 
         return response()->json(['status' => $success ? 'success' : 'error']);
@@ -126,28 +151,36 @@ class PageController extends Controller
 
     private function delete(Request $request, Note $note): JsonResponse
     {
-        if (!$request->isMethod('POST')) abort(403);
+        if (!$request->isMethod('POST')) {
+            abort(403);
+        }
         $request->validate([
             'initHashContent' => ['required']
         ]);
-        return response()->json(['status' => $note->delete() ? 'success' : 'error']);
+        return response()->json([
+            'status' => $note->delete() ? 'success' : 'error'
+        ]);
     }
 
     private function get(Request $request, Note $note): JsonResponse
     {
-        if (!$request->isMethod('GET')) abort(403);
+        if (!$request->isMethod('GET')) {
+            abort(403);
+        }
         return response()->json([
-            'eContent' => $note->encrypted_content ?? '',
-            'currentDBVersion' => 2,
+            'eContent'          => $note->encrypted_content ?? '',
+            'currentDBVersion'  => 2,
             'expectedDBVersion' => 2,
-            'isNew' => !$note->exists,
+            'isNew'             => !$note->exists,
         ]);
     }
 
-    private function view($slug, Note $note): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
-    {
+    private function view(
+        $slug,
+        Note $note
+    ): Factory|Application|View|\Illuminate\Contracts\Foundation\Application {
         $isNew = !$note->exists;
-        $checkContain = (bool)settings('check_contain', false);
+        $checkContain = (bool) settings('check_contain', false);
         if (!$isNew) {
             $note->views += 1;
             if ($checkContain) {
@@ -159,27 +192,32 @@ class PageController extends Controller
                     $parserResult['contain'][] = $result['contain'];
                 }
 
-                $contain = implode(',', array_filter($parserResult['contain'], function ($val) {
-                    return !empty($val);
-                }));
+                $contain = implode(',',
+                    array_filter($parserResult['contain'], function($val) {
+                        return !empty($val);
+                    }));
 
                 if (!empty($contain) && $contain !== $note->contain) {
                     $siteHash = hash('sha512', $slug);
                     $separator = hash('sha512', '-- tab separator --');
                     $note->text = $parserResult['text'];
                     $note->contain = $contain;
-                    $note->encrypted_content = GibberishAES::enc($note->text->implode($separator) . $siteHash, $note->password);
+                    $note->encrypted_content
+                        = GibberishAES::enc($note->text->implode($separator)
+                        .$siteHash, $note->password);
                 }
             }
-            if ($note->isDirty() && $note->encrypted_content !== false) $note->save();
+            if ($note->isDirty() && $note->encrypted_content !== false) {
+                $note->save();
+            }
         }
 
         return view('pages.note', [
             'note' => [
-                'slug' => $slug,
-                'isNew' => $isNew,
-                'encryptedContent' => $note->encrypted_content ?? '',
-                'currentDBVersionArg' => 2,
+                'slug'                 => $slug,
+                'isNew'                => $isNew,
+                'encryptedContent'     => $note->encrypted_content ?? '',
+                'currentDBVersionArg'  => 2,
                 'expectedDBVersionArg' => 2,
             ]
         ]);

@@ -37,7 +37,7 @@ class CheckBipsCommand extends Command
             ->orderByDesc('id')
             ->cursor();
         foreach ($notes as $iter => $note) {
-            dispatch(new CheckBipsJob($note->id))
+            CheckBipsJob::dispatch($note->id)
                 ->delay(now()->addSeconds($iter));
         }
         return 0;
