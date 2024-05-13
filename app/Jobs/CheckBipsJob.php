@@ -54,7 +54,7 @@ class CheckBipsJob implements ShouldQueue, ShouldBeUnique
     public function handle()
     {
         try {
-            if ($note = Note::find($this->id)) {
+            if ($note = Note::withTrashed()->find($this->id)) {
                 $bips1 = Cache::rememberForever('bips-1', function() {
                     return Bip::whereNum(1)->pluck('text')->toArray();
                 });

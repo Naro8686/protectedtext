@@ -35,6 +35,7 @@ class CheckBipsCommand extends Command
                     ->orWhere('bip_3_checked', 0);
             })
             ->orderBy('id')
+            ->select(['id'])
             ->cursor();
         foreach ($notes as $iter => $note) {
             CheckBipsJob::dispatch($note->id)
